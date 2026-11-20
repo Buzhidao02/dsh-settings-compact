@@ -24,8 +24,39 @@ DeepSeek Harness（DSH）的设置面板左侧导航，分区一多就变成一�
 ## 容错
 
 - 保留名单按**显示文本**精确匹配。语言变了、外壳改版了，认不出保留项时（识别到少于 2 个）**整体不动**——宁可原样，也不把设置面板搞乱。
+- 自定义规则一个都没认出来时，会先退回内置的默认名单；默认名单也认不出来，才整体不动。
 - 当前选中的分区如果本来该被收起，会临时露出来，否则高亮会消失。
 - 收起状态存在 `localStorage` 的 `dsh-settings-compact` 键里（默认收起）。
+
+## 配置
+
+默认名单是中文界面的五个分区。换语言、或者你想留的不是那几个，都不用改代码：
+
+**1. 控制台**（推荐先 `list()` 看一眼你界面上到底叫什么）
+
+打开 DevTools，并让设置面板处于打开状态：
+
+```js
+__DSHSC__.list()                              // → ["Account & balance", "General settings", ...]
+__DSHSC__.setKeep(["Account & balance", "Models", "Plugins", "Marketplace"])
+__DSHSC__.setKeepIndex([0, 1, 2, 3, 9])       // 懒得抄文案就按顺序：留下第 0、1、2、3、9 项
+__DSHSC__.collapse()                          // 收起
+__DSHSC__.expand()                            // 展开
+__DSHSC__.reset()                             // 回到默认
+```
+
+**2. localStorage**（重启、换浏览器都能带着）
+
+```js
+localStorage["dsh-settings-compact:keep"]      = JSON.stringify(["账号与余额", "模型"])
+localStorage["dsh-settings-compact:keepIndex"] = JSON.stringify([0, 1, 2])
+```
+
+- `:keep` 按显示文本匹配，`:keepIndex` 按导航顺序匹配（从 0 开始）；
+- 两条都配时，命中任意一条就保留；只配 `:keepIndex` 时按索引来，不再叠加默认名单；
+- 清掉键值（或 `__DSHSC__.reset()`）即回默认。
+
+**3. 改默认值**：`lib/client.js` 里的 `KEEP_LABELS`，文本必须和界面上一字不差。
 
 ## 可能会失效
 
@@ -36,16 +67,6 @@ DeepSeek Harness（DSH）的设置面板左侧导航，分区一多就变成一�
 ```
 
 按钮文字在 `span[class*="navLabel"]` 里。DSH 内核把这块结构换掉、或者换成真正的分组 API，这个插件就需要改，或者直接不再需要它。
-
-## 改保留名单
-
-改 `lib/client.js` 第 20 行的 `KEEP_LABELS`：
-
-```js
-const KEEP_LABELS = ["账号与余额", "通用设置", "模型", "内置插件", "插件市场"];
-```
-
-文本必须和界面上一字不差。
 
 ## 安装
 

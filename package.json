@@ -1,6 +1,6 @@
 {
   "name": "dsh-settings-compact",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "把设置面板左侧导航里不常用的分区收进一个可展开的折叠组。",
   "type": "module",
